@@ -12,11 +12,12 @@ output:
 pkgdown:
   as_is: true
 ---
-
+# Datensatz: Übersterblichkeit
 ## Wiederholung: Deskriptiv- und Inferenzstatistik der multiplen Regression
 Aus aktuellem Anlass: Bitte lest Sie diese ["Analyse"](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwil9-Hk9sX0AhU2gv0HHYAqCk8QFnoECAcQAQ&url=https%3A%2F%2Fwww.utebergner.de%2Fcms%2Fwp-content%2Fuploads%2F2021%2F11%2F%25C3%259Cbersterblichkeit-KW-36-bis-40-in-2021-003.docx&usg=AOvVaw0_93ZB0fmqD6gfd7ISmGfj) und kritisiert die Anwendbarkeit der Regressionsmodellierung anhand eures reichhaltigen Vorwissens aus den letzten beiden Sitzungen 😉 (zur journalistischen Aufarbeitung siehe z.B. [hier](https://www.heise.de/tp/features/Forencheck-Niedrige-Uebersterblichkeit-in-Sachsen-Impfquote-in-Afrika-und-der-Begriff-der-Immunitaet-6279279.html)
 
-## Übung: Deskriptiv- und Inferenzstatistik der multiplen Regression 
+# Datensatz: kidiq
+
 In Kapitel 3 (siehe moodle) aus Gelman & Hill (2006) wird in Abbildung 3.2. der Testrohwert eines Intelligenztest von Kindern `kid_score` mit dem IQ-Wert der Mütter `mom_iq` prädiziert. Ihr könnt die zugehörigen Daten mit der folgenden Syntax importieren
 ```{r, message=FALSE, results='hide'}
 library(tidyverse)
@@ -28,6 +29,9 @@ haven::write_sav(data_kidiq, "data/kidiq.sav")
 ```
 
 JASP, jamovi und SPSS-Nutzer\*innen können den Datensatz `r xfun::embed_file("data/kidiq.sav", "kidiq.sav", "hier")` herunterladen.
+
+
+## Übung: Deskriptiv- und Inferenzstatistik der multiplen Regression (kidiq)
 
 > AA: Bitte prädiziert `kid_score` mit `mom_iq`, berechnet Effektstärken und Inferenzstatistiken und prüft, inwiefern Ihr die Annahmen dieser für hinreichend erfüllt anseht.
 
@@ -64,5 +68,70 @@ library(performance)
 check_model(mod_kidiq_1)
 ```
 
-## Dummykodierung
+## Dummykodierung (kidiq)
 Gelman und Hill (2008) ...
+
+## Moderation/Interaktion nominal-metrisch (kidiq)
+
+
+
+
+
+# Datensatz: weightloss
+Der Datensatz kann wieder wie folgt nach R importiert werden
+```{r}
+data_weightloss <-
+  read.csv("https://stats.idre.ucla.edu/wp-content/uploads/2019/03/exercise.csv") %>%
+  mutate(prog = factor(prog, labels = c("jog", "swim", "read")),
+         gender = factor(gender, labels = c("male", "female")))
+```
+
+```{r, echo = F, results='hide'}
+haven::write_sav(data_weightloss, "data/data_weightloss.sav")
+```
+
+bzw. `r xfun::embed_file("data/data_weightloss.sav", "data_weightloss.sav", "hier")` als `.sav` heruntergeladen werden.
+
+Die Variablen im Datensatz [hier geklaut](https://stats.idre.ucla.edu/r/seminars/interactions-r/#top) sind die folgenden:
+
+* loss: weight loss (continuous), positive = weight loss, negative scores = weight gain
+* hours: hours spent exercising (continuous)
+* effort: effort during exercise (continuous), 0 = minimal physical effort and 50 = maximum effort
+* prog: exercise program (categorical)
+    * jogging=1
+    * swimming=2
+    * reading=3
+* gender: participant gender (binary)
+    * male=1
+    * female=2
+
+
+## Moderation/Interaktion nominal-metrisch (weightloss)
+```{r}
+lm(loss ~ hours * gender, data = data_weightloss) %>%
+  summary()
+```
+
+```{r}
+ggplot(data_weightloss, aes(hours, loss, color = gender)) + 
+  geom_point() + 
+  stat_smooth(method = "lm") + 
+  theme_modern_rc()
+```
+
+
+## Moderation/Interaktion metrisch-metrisch (weightloss)
+```{r}
+lm(scale(loss) ~ scale(hours) * scale(effort), data = data_weightloss) %>%
+  summary()
+```
+
+### Grafische Darstellung
+```{r}
+ggplot(data_weightloss, aes(hours, effort, color = loss)) + 
+  geom_point() + 
+  theme_modern_rc()
+```
+
+
+
