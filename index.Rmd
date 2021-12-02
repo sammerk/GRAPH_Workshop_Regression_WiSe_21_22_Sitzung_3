@@ -14,11 +14,11 @@ pkgdown:
 ---
 
 ## Wiederholung: Deskriptiv- und Inferenzstatistik der multiplen Regression
-Aus aktuellem Anlass: Bitte lest Sie diese ["Analyse"](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwil9-Hk9sX0AhU2gv0HHYAqCk8QFnoECAcQAQ&url=https%3A%2F%2Fwww.utebergner.de%2Fcms%2Fwp-content%2Fuploads%2F2021%2F11%2F%25C3%259Cbersterblichkeit-KW-36-bis-40-in-2021-003.docx&usg=AOvVaw0_93ZB0fmqD6gfd7ISmGfj) und kritisiert die Anwendbarkeit der Regressionsmodellierung anhand eures reichhaltigen Vorwissens aus den letzten beiden Sitzungen 😉.
+Aus aktuellem Anlass: Bitte lest Sie diese ["Analyse"](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwil9-Hk9sX0AhU2gv0HHYAqCk8QFnoECAcQAQ&url=https%3A%2F%2Fwww.utebergner.de%2Fcms%2Fwp-content%2Fuploads%2F2021%2F11%2F%25C3%259Cbersterblichkeit-KW-36-bis-40-in-2021-003.docx&usg=AOvVaw0_93ZB0fmqD6gfd7ISmGfj) und kritisiert die Anwendbarkeit der Regressionsmodellierung anhand eures reichhaltigen Vorwissens aus den letzten beiden Sitzungen 😉 (zur journalistischen Aufarbeitung siehe z.B. [hier](https://www.heise.de/tp/features/Forencheck-Niedrige-Uebersterblichkeit-in-Sachsen-Impfquote-in-Afrika-und-der-Begriff-der-Immunitaet-6279279.html)
 
-## Vertiefung: Deskriptiv- und Inferenzstatistik der multiplen Regression `kidiq`
-In Kapitel 3 (siehe moodle) aus Gelman & Hill (2006) wird in Abbildung 3.2. der Testrohwert eines Intelligenztest von Kindern mit dem IQ-Wert der Mütter prädiziert. Ich könnt die zugehörigen Daten mit der folgenden Syntax importieren
-```{r}
+## Übung: Deskriptiv- und Inferenzstatistik der multiplen Regression 
+In Kapitel 3 (siehe moodle) aus Gelman & Hill (2006) wird in Abbildung 3.2. der Testrohwert eines Intelligenztest von Kindern `kid_score` mit dem IQ-Wert der Mütter `mom_iq` prädiziert. Ihr könnt die zugehörigen Daten mit der folgenden Syntax importieren
+```{r, message=FALSE, results='hide'}
 library(tidyverse)
 data_kidiq <- read_delim("https://raw.githubusercontent.com/sammerk/did_data/master/kidiq.csv")
 ```
@@ -28,3 +28,41 @@ haven::write_sav(data_kidiq, "data/kidiq.sav")
 ```
 
 JASP, jamovi und SPSS-Nutzer\*innen können den Datensatz `r xfun::embed_file("data/kidiq.sav", "kidiq.sav", "hier")` herunterladen.
+
+> AA: Bitte prädiziert `kid_score` mit `mom_iq`, berechnet Effektstärken und Inferenzstatistiken und prüft, inwiefern Ihr die Annahmen dieser für hinreichend erfüllt anseht.
+
+### Regression `kid_score ~ mom_iq`
+Die Syntax für ein nicht-standardisiertes Modell:
+```{r}
+lm(kid_score ~ mom_iq, data = data_kidiq)
+```
+
+Da die Daten keine missings enthalten, kann man direkt in dere "formula" `scale()` für die Standardisierung anwenden und erhält via `summary()` auch $R^2$ und p-Werte für $\beta_i$ und $R^2$.
+```{r}
+mod_kidiq_1 <- lm(scale(kid_score) ~ scale(mom_iq), data = data_kidiq)
+summary(mod_kidiq_1)
+```
+
+Mit $\beta_1 = .4$ haben wir einen moderaten bis starken Effekt nach Cohen (1988), der p-Wert ist < .05. Auch der $BF_{10}$ zeigt sehr starke relative Evidenz für das Modell mit Prädiktor:
+```{r}
+library(BayesFactor)
+lmBF(formula = kid_score ~ mom_iq, data = data_kidiq)
+```
+
+### Regressionsdiagnostik
+```{r, fig.retina = 3}
+library(hrbrthemes)
+ggplot(data_kidiq, aes(mom_iq, kid_score)) + 
+  geom_point() + 
+  stat_smooth() + 
+  theme_modern_rc()
+```
+
+### Annahmen
+```{r, fig.height=10}
+library(performance)
+check_model(mod_kidiq_1)
+```
+
+## Dummykodierung
+Gelman und Hill (2008) ...
