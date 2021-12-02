@@ -1,0 +1,30 @@
+---
+title: "GRAPH Workshop: Universaltool Regression"
+subtitle: "Sitzung 3"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    code_folding: show
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+    downcute_theme: "chaos"
+pkgdown:
+  as_is: true
+---
+
+## Wiederholung: Deskriptiv- und Inferenzstatistik der multiplen Regression
+Aus aktuellem Anlass: Bitte lest Sie diese ["Analyse"](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwil9-Hk9sX0AhU2gv0HHYAqCk8QFnoECAcQAQ&url=https%3A%2F%2Fwww.utebergner.de%2Fcms%2Fwp-content%2Fuploads%2F2021%2F11%2F%25C3%259Cbersterblichkeit-KW-36-bis-40-in-2021-003.docx&usg=AOvVaw0_93ZB0fmqD6gfd7ISmGfj) und kritisiert die Anwendbarkeit der Regressionsmodellierung anhand eures reichhaltigen Vorwissens aus den letzten beiden Sitzungen 😉.
+
+## Vertiefung: Deskriptiv- und Inferenzstatistik der multiplen Regression `kidiq`
+In Kapitel 3 (siehe moodle) aus Gelman & Hill (2006) wird in Abbildung 3.2. der Testrohwert eines Intelligenztest von Kindern mit dem IQ-Wert der Mütter prädiziert. Ich könnt die zugehörigen Daten mit der folgenden Syntax importieren
+```{r}
+library(tidyverse)
+data_kidiq <- read_delim("https://raw.githubusercontent.com/sammerk/did_data/master/kidiq.csv")
+```
+
+```{r, echo = F, results='hide'}
+haven::write_sav(data_kidiq, "data/kidiq.sav")
+```
+
+JASP, jamovi und SPSS-Nutzer\*innen können den Datensatz `r xfun::embed_file("data/kidiq.sav", "kidiq.sav", "hier")` herunterladen.
