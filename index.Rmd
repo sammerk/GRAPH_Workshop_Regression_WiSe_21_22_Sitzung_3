@@ -69,11 +69,22 @@ check_model(mod_kidiq_1)
 ```
 
 ## Dummykodierung (kidiq)
-Gelman und Hill (2008) ...
+Wir wollen kid.score mit der DUmmyvariable "Mum completed High School" prädizieren.
+```{r}
+mod_kidiq_2 <- lm(kid_score ~ mom_hs, data = data_kidiq)
+
+summary(mod_kidiq_2)
+```
+
+
 
 ## Moderation/Interaktion nominal-metrisch (kidiq)
 
 
+```{r}
+usedata(depress)
+depress <- read.table("data/depress.txt", header = TRUE)
+```
 
 
 
